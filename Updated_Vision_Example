@@ -4,7 +4,7 @@
 
 // Read the Commit Message for details on how this works.
 
-// Sample robot code to illustrate Networktable usage only. THis does not have the drive and implement code
+// Sample robot code to illustrate Networktable usage only. This does not have the drive and implement code
 #include <iostream>
 #include <memory>
 #include <string>
@@ -32,7 +32,7 @@ private:
 		double tgtDist; //junk is -1
 		double errorX;   //junk is 101 (this may not work)
 		double errorY;   // junk is 101 (suggest 1001)
-		double tgtAng;  //junk value is 36
+		double tgtAng;  //junk value is 360
 		//double seconds;
 public:
 
@@ -103,10 +103,10 @@ public:
 	void TeleopPeriodic()
 	{
 		//NETWORK TABLES STEP 1.
-		//this section of code will pull the numbers off the newtorl table that the pi
-		//provided. However, these will only show up on the "variables" tab on the dashboard.
-		//this syntax will not make the variables show up on a custom GUI. See the notes below to
-		// do that.
+		//This section of code will pull the values off the newtorktable that is populated by the R-pi.
+		//However, these will only show up on the "variables" tab on the dashboard.
+		//This syntax will not make the variables show up on the dashboard. See the next section for that.
+		
 		cX = m_Table->GetNumber("cX",cX);
 		cY= m_Table->GetNumber("cY",cY);
 		tgtStatus = m_Table->GetNumber("tgtStatus",tgtStatus);
@@ -118,22 +118,23 @@ public:
 
 
 		//NETWORK TABLES STEP 2.
-		// This section puts the networktable values onto the Smartdashboard
-		//"DB/String" 0 -7 are on the "Basic Tab" and are OK for testing but there are no labels
-		//Use PutNumber to populate the variables and get the values to the indicator or graph etc.
-		//the "vision" prefix is not necessary, it just helps identify what variables are coming from
-		//the Pi. For instance the name "Vision/cX" is the name of the variable cX. This code, and the
-		//NT Read block in the dashboard need to have the same name.
-		SmartDashboard::PutString("DB/String 0", std::to_string(cX));
+		// This section puts the networktable values onto the Smartdashboard.
+		//"DB/String" 0 -7 are located on the "Basic Tab" of the dashboard. These cells are and are OK for testing
+		// but there are no labels and the output is just a stream of numbers.
+		//Use Smartdashboard::PutNumber("var_name", var_name) to push the variables
+		// On the LabView side, add an NT read block for each variable. The constant name for each block needs to match
+		// the "var_name" used in the PutNumber argument (no "" marks though) 
+		
+		SmartDashboard::PutString("DB/String 0", std::to_string(cX)); // ok to test but not really usefull for competition
 		SmartDashboard::PutString("DB/String 1", std::to_string(cY));
-		SmartDashboard::PutNumber("cX", (cX));//make sure the constant in Labview dashboard is called "Vision/cx" ALSO
-		SmartDashboard::PutNumber("cY", (cY));
+		SmartDashboard::PutNumber("cX", (cX));//make sure the constant in Labview NT Read block is called cX ALSO.
+		SmartDashboard::PutNumber("cY", (cY));// cX and cY describe the coordinates of the target center in pixels
 		SmartDashboard::PutNumber("tgtStatus", (tgtStatus));
 		SmartDashboard::PutNumber("tgtDist", (tgtDist));
-		SmartDashboard::PutNumber("errorX", (errorX));
+		SmartDashboard::PutNumber("errorX", (errorX)); // error is the number of pixels the target center deviates from screen center
 		SmartDashboard::PutNumber("errorY", (errorY));
 		SmartDashboard::PutNumber("tgtAngle", (tgtAng));
-		//SmartDashboard::PutNumber("seconds", (seconds));
+		//SmartDashboard::PutNumber("seconds", (seconds)); // time is on the table for possible use in POSE calcs.
 
 
 
